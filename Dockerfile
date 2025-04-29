@@ -1,20 +1,32 @@
-FROM ubuntu:latest
+FROM ubuntu:20.04
 
-RUN apt-get update && apt-get install -y \
-    curl \
-    bash \
-    docker.io \
-    && rm -rf /var/lib/apt/lists/*
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y \
+    libstdc++6:i386 \
+    ca-certificates
 
-WORKDIR /app
+RUN useradd -ms /bin/bash hltv
 
-COPY HLTV-Manager .
-COPY frontend /app/frontend
+WORKDIR /home/hltv
+COPY hltv .
+COPY filesystem_stdio.so .
+COPY proxy.so .
+COPY libsteam_api.so /usr/lib
+COPY core.so .
+COPY steamclient.so .
+COPY libsteam.so .steam/sdk32/
 
-RUN chmod +x ./HLTV-Manager
+RUN mkdir -p /home/hltv/cstrike
 
-VOLUME /var/run/docker.sock:/var/run/docker.sock
+RUN chmod +x ./hltv && \
+    chown -R hltv:hltv /home/hltv
 
-USER root
+USER hltv
 
-CMD ["./HLTV-Manager"]
+VOLUME ["/home/hltv/cstrike"]
+
+ENV LD_LIBRARY_PATH=./
+
+ENTRYPOINT ["./hltv"]
+CMD ["+connect", "127.0.0.1:27015", "-port", "1337", "+record", "demoname", "+exec", "hltv.cfg"]
