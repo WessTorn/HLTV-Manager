@@ -6,21 +6,21 @@ networks:
 
 services:
   hltv_manager:
-    image: ghcr.io/wesstorn/hltv-manager:beta0.1
+    image: ghcr.io/wesstorn/hltv-manager:${VERSION}
     container_name: hltv_manager
     networks:
      - hltv_manager_net
     ports:
-      - "3000:3000" # Указываем порт на котом хотим развернуть сайт "[ваш порт]:3000"
+      - "${PORT}:3000"
     volumes:
       - ./log:/app/log
-      - ./hltv-runners.yaml:/app/hltv-runners.yaml
+      - ./${RUNNER_FILE}:/app/${RUNNER_FILE}
       - /var/run/docker.sock:/var/run/docker.sock
       - /media/hltv-manager/demos:/media/hltv-manager/demos
     environment:
       SITE_IP: "0.0.0.0"
       SITE_PORT: "3000"
-      HLTV_DOCKER: "ghcr.io/wesstorn/hltv-files:v1.1"
-      HLTV_RUNNER_FILE: "hltv-runners.yaml"
+      HLTV_DOCKER: ${RUNNER_FILE}
+      HLTV_RUNNER_FILE: "${RUNNER_FILE}"
       HLT_DEMOS_DIR: "/media/hltv-manager"
     restart: unless-stopped

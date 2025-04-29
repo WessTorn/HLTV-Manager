@@ -21,45 +21,48 @@ Half-Life TV Manager - Позволяет запускать неогранич�
 
 ## Установка
 
-Скачиваем docker-compose 
+<details>
+  <summary>Ubuntu</summary>
 
-`sudo apt update`
+- Скачиваем docker-compose 
 
-`sudo apt install docker-compose`
+    `sudo apt update && sudo apt upgrade`
 
-Скачиваем проект
+    `sudo apt install docker-compose`
 
-`wget https://github.com/WessTorn/HLTV-Manager/releases/download/v0.0.1/Hltv-Manager.tar.gz`
+- Скачиваем контейнер HLTV
 
-`sudo docker pull ghcr.io/wesstorn/hltv-files:v1.1`
+    `sudo docker pull ghcr.io/wesstorn/hltv-files:v1.1`
 
-Распаковываем архив и заходим в него
+- Загружаем Hltv-Manager и заходим в него
 
-`tar -xvzf Hltv-Manager.tar.gz`
+    `git clone --branch self-hosted https://github.com/WessTorn/HLTV-Manager.git`
 
-`cd Hltv-Manager`
+    `cd HLTV-Manager`
 
-Если необходимо настраиваем указываем порт который вам нужен для сайта (Указывать, где комментарий `#`)
+    Если необходимо настраиваем указываем порт который вам нужен для сайта (Указывать, где комментарий `#`)
 
-`nano docker-compose.yaml`
+    `nano docker-compose.yaml`
 
-Настраиваем наши HLTV
+    Настраиваем наши HLTV
 
-`nano hltv-runners.yaml`
+    `nano hltv-runners.yaml`
 
-Запускаем сервис
+- Запускаем сервис
 
-`sudo docker-compose up -d`
+    `sudo docker-compose up -d`
 
-Docker команды
+- Docker команды
 
-`sudo docker-compose up -d` - Запустить в фоне
+    `sudo docker-compose up -d` - Запустить в фоне
 
-`sudo docker-compose up` - Запустить в текущей сессии (показывает логи)
+    `sudo docker-compose up` - Запустить в текущей сессии (показывает логи)
 
-`sudo docker-compose down` - Остановить сервис
+    `sudo docker-compose down` - Остановить сервис
 
-`sudo docker-compose logs` - Посмотреть логи
+    `sudo docker-compose logs` - Посмотреть логи
+</details>
+
 
 ## В будущем
 
