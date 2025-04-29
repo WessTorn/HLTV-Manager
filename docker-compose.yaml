@@ -20,7 +20,7 @@ services:
     environment:
       SITE_IP: "0.0.0.0"
       SITE_PORT: "3000"
-      HLTV_DOCKER: ${HLTV_IMAGE}
       HLTV_DOCKER: "ghcr.io/wesstorn/hltv-files:${HLTV_VERSION}"
+      HLTV_RUNNER_FILE: "${RUNNER_FILE}"
       HLT_DEMOS_DIR: "/media/hltv-manager"
     restart: unless-stopped
