@@ -18,6 +18,17 @@ COPY steamclient.so .
 COPY libsteam.so .steam/sdk32/
 
 RUN mkdir -p /home/hltv/cstrike
+RUN mkdir -p /home/hltv/tfc
+RUN mkdir -p /home/hltv/dod
+RUN mkdir -p /home/hltv/dmc
+RUN mkdir -p /home/hltv/gearbox
+RUN mkdir -p /home/hltv/ricochet
+RUN mkdir -p /home/hltv/valve
+RUN mkdir -p /home/hltv/czero
+RUN mkdir -p /home/hltv/czeror
+RUN mkdir -p /home/hltv/bshift
+RUN mkdir -p /home/hltv/cstrike_beta
+
 
 RUN chmod +x ./hltv && \
     chown -R hltv:hltv /home/hltv
@@ -25,6 +36,16 @@ RUN chmod +x ./hltv && \
 USER hltv
 
 VOLUME ["/home/hltv/cstrike"]
+VOLUME ["/home/hltv/tfc"]
+VOLUME ["/home/hltv/dod"]
+VOLUME ["/home/hltv/dmc"]
+VOLUME ["/home/hltv/gearbox"]
+VOLUME ["/home/hltv/ricochet"]
+VOLUME ["/home/hltv/valve"]
+VOLUME ["/home/hltv/czero"]
+VOLUME ["/home/hltv/czeror"]
+VOLUME ["/home/hltv/bshift"]
+VOLUME ["/home/hltv/cstrike_beta"]
 
 ENV LD_LIBRARY_PATH=./
 
