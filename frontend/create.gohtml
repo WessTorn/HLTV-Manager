@@ -1,0 +1,61 @@
+{{define "create"}}
+<!DOCTYPE html>
+<html lang="en">
+{{ template "head" }}
+<body>
+<div class="container">
+    <h1 class="text-center">Создание HLTV</h1>
+    <form method="post" action="/admin/create" class="form">
+
+        <div class="form-group">
+            <label>Название (Name):</label>
+            <input type="text" name="name" class="form-control" value="{{.Name}}" required>
+        </div>
+
+        <div class="form-group">
+            <label>IP для отображения (ShowIP):</label>
+            <input type="text" name="showip" class="form-control" value="{{.ShowIP}}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Connect:</label>
+            <input type="text" name="connect" class="form-control" value="{{.Connect}}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Порт HLTV (Port):</label>
+            <input type="text" name="port" class="form-control" value="{{.Port}}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Game ID:</label>
+            <input type="text" name="gameid" class="form-control" value="{{.GameID}}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Название демо (DemoName):</label>
+            <input type="text" name="demoname" class="form-control" value="{{.DemoName}}">
+        </div>
+
+        <div class="form-group">
+            <label>Максимальные дни хранения демо (MaxDemoDay):</label>
+            <input type="text" name="maxdemoday" class="form-control" value="{{.MaxDemoDay}}">
+        </div>
+
+        <div class="form-group">
+            <label>CVars (по одной на строку):</label>
+            <textarea name="cvars" class="form-control" rows="8">{{.Cvars}}</textarea>
+        </div>
+
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="debug"> Debug Terminal Log
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-success">Создать</button>
+    </form>
+</div>
+</body>
+</html>
+{{end}}

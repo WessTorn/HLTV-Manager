@@ -1,0 +1,40 @@
+{{define "admin"}}
+<!DOCTYPE html>
+<html lang="en">
+{{ template "head" }}
+<body>
+<div class="container">
+    <h1 class="text-center">Admin Panel</h1>
+    <a href="/admin/create" class="btn btn-success">Создать HLTV</a>
+    <table class="table table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>ShowIP</th>
+                <th>Connect</th>
+                <th>Port</th>
+                <th>DemoName</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{range .}}
+            <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Settings.Name}}</td>
+                <td>{{.Settings.ShowIP}}</td>
+                <td>{{.Settings.Connect}}</td>
+                <td>{{.Settings.Port}}</td>
+                <td>{{.Settings.DemoName}}</td>
+            </tr>
+            {{else}}
+            <tr>
+                <td colspan="6" class="text-center">Нет HLTV серверов</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
+{{end}}

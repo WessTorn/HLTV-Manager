@@ -1,0 +1,20 @@
+{{define "login"}}
+<!DOCTYPE html>
+<html lang="en">
+{{ template "head" }}
+<body>
+<div class="container">
+    <h1 class="text-center">Admin Login</h1>
+    <form method="post" action="/admin/login" class="form-signin">
+        <div class="form-group">
+            <input type="text" name="username" placeholder="Логин" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Пароль" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Войти</button>
+    </form>
+</div>
+</body>
+</html>
+{{end}}
