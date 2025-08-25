@@ -109,3 +109,11 @@ func (hltv *HLTV) WriteCommand(cmd string) error {
 	_, err := hltv.Docker.Attach.Conn.Write([]byte(cmd + "\n"))
 	return err
 }
+
+/*
+
+hltv_manager    | ***** FATAL ERROR *****
+hltv_manager    | Server::SetState: not valid m_ServerState (6 -> 8).
+hltv_manager    | *** STOPPING SYSTEM ***
+
+*/
