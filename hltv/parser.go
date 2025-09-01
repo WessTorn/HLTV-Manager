@@ -29,6 +29,7 @@ var patterns = map[string]*regexp.Regexp{
 	"recording":    regexp.MustCompile(`^Start recording to [a-zA-Z0-9]+-\d+-[a-zA-Z0-9_]+\.dem.$`),
 	"rejected":     regexp.MustCompile(`^Connection rejected: No password set.*$`),
 	"disconnected": regexp.MustCompile(`^Disconnected.*$`),
+	"server_state": regexp.MustCompile(`^Server::SetState: not valid m_ServerState \(\d+ -> \d+\).$`),
 }
 
 func (hltv *HLTV) TerminalControl() {
@@ -115,6 +116,10 @@ func (hltv *HLTV) ParseHltvOutLines(input string) {
 				case patterns["disconnected"].MatchString(line):
 					hltv.Parser.Status = HLTV_CONNECT
 					log.InfoLogger.Printf("HLTV (ID: %d, Name: %s) Disconnected from server: %s", hltv.ID, hltv.Settings.Name, hltv.Settings.Connect)
+				case patterns["server_state"].MatchString(line):
+					log.ErrorLogger.Printf("HLTV (ID: %d, Name: %s) Invalid server state: %s", hltv.ID, hltv.Settings.Name, line)
+					_ = hltv.Restart()
+					hltv.Parser.Status = HLTV_CHECK_INIT
 				}
 				continue
 			}

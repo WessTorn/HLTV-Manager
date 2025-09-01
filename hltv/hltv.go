@@ -89,6 +89,29 @@ func (hltv *HLTV) Start() error {
 	return nil
 }
 
+func (hltv *HLTV) Restart() error {
+	log.WarningLogger.Printf("HLTV (ID: %d, Name: %s) Restarting container...", hltv.ID, hltv.Settings.Name)
+
+	if err := hltv.Quit(); err != nil {
+		log.ErrorLogger.Printf("HLTV (ID: %d, Name: %s) Error during quit: %v", hltv.ID, hltv.Settings.Name, err)
+	}
+
+	dockerClient, err := docker.NewDockerClient()
+	if err != nil {
+		log.ErrorLogger.Printf("HLTV (ID: %d, Name: %s) Failed to recreate Docker client: %v", hltv.ID, hltv.Settings.Name, err)
+		return err
+	}
+	hltv.Docker = dockerClient
+
+	if err := hltv.Start(); err != nil {
+		log.ErrorLogger.Printf("HLTV (ID: %d, Name: %s) Failed to restart: %v", hltv.ID, hltv.Settings.Name, err)
+		return err
+	}
+
+	log.InfoLogger.Printf("HLTV (ID: %d, Name: %s) Restart completed successfully.", hltv.ID, hltv.Settings.Name)
+	return nil
+}
+
 func (hltv *HLTV) Quit() error {
 	err := hltv.WriteCommand("quit")
 	if err != nil {
