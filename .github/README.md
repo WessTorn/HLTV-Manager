@@ -32,7 +32,7 @@ Half-Life TV Manager - Позволяет запускать неогранич�
 
 - Скачиваем контейнер HLTV
 
-    `sudo docker pull ghcr.io/wesstorn/hltv-files:v1.1`
+    `sudo docker pull ghcr.io/wesstorn/hltv-files:v1.3`
 
 - Загружаем Hltv-Manager и заходим в него
 
