@@ -4,7 +4,15 @@ RUN dpkg --add-architecture i386 && \
     apt-get update && \
     apt-get install -y \
     libstdc++6:i386 \
-    ca-certificates
+    ca-certificates \
+    tzdata && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV TZ=Europe/Moscow
+
+RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone && \
+    dpkg-reconfigure -f noninteractive tzdata
 
 RUN useradd -ms /bin/bash hltv
 
