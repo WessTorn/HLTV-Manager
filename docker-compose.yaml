@@ -17,10 +17,13 @@ services:
       - ./${RUNNER_FILE}:/app/${RUNNER_FILE}
       - /var/run/docker.sock:/var/run/docker.sock
       - /media/hltv-manager/demos:/media/hltv-manager/demos
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro 
     environment:
       SITE_IP: "0.0.0.0"
       SITE_PORT: "3000"
       HLTV_DOCKER: "ghcr.io/wesstorn/hltv-files:${HLTV_VERSION}"
       HLTV_RUNNER_FILE: "${RUNNER_FILE}"
       HLT_DEMOS_DIR: "/media/hltv-manager"
+      TZ: "Europe/Moscow"
     restart: unless-stopped
