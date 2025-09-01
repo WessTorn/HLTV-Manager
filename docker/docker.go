@@ -3,6 +3,7 @@ package docker
 import (
 	log "HLTV-Manager/logger"
 	"context"
+	"os"
 	"strconv"
 	"time"
 
@@ -79,6 +80,9 @@ func (docker *Docker) CreateAndStart(config HltvContainerConfig) error {
 		AttachStdin:  true,
 		AttachStdout: true,
 		AttachStderr: true,
+		Env: []string{
+			"TZ=" + os.Getenv("TZ"), // прокидываем из hltv-manager
+		},
 	}, &container.HostConfig{
 		Mounts: []mount.Mount{
 			{
@@ -90,6 +94,18 @@ func (docker *Docker) CreateAndStart(config HltvContainerConfig) error {
 				Type:   mount.TypeBind,
 				Source: config.CfgPath,
 				Target: "/home/hltv/hltv.cfg",
+			},
+			{
+				Type:     mount.TypeBind,
+				Source:   "/etc/localtime",
+				Target:   "/etc/localtime",
+				ReadOnly: true,
+			},
+			{
+				Type:     mount.TypeBind,
+				Source:   "/etc/timezone",
+				Target:   "/etc/timezone",
+				ReadOnly: true,
 			},
 		},
 		AutoRemove: true,
