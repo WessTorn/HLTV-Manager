@@ -13,7 +13,7 @@ HLTV: # Хлтв можно указать сколько угодно, глав
       - publicgame "0"
       - autoretry "1"
       - rate "100000"
-      - updaterate "40"
+      - updaterate "102"
       - maxrate "10000"
       - delay "0"
       - blockvoice "0"
