@@ -56,9 +56,14 @@ func createHltvCfg(hltv *HLTV) (string, error) {
 }
 
 func parseDemoFilename(filename string) (Demos, error) {
+	nameForParsing := filename
+	if strings.HasSuffix(nameForParsing, ".zip") {
+		nameForParsing = strings.TrimSuffix(nameForParsing, ".zip")
+	}
+
 	re := regexp.MustCompile(`^[^-]+-(\d{10})-(.+)\.dem$`)
 
-	matches := re.FindStringSubmatch(filename)
+	matches := re.FindStringSubmatch(nameForParsing)
 	if matches == nil || len(matches) != 3 {
 		return Demos{}, fmt.Errorf("incorrect file name format")
 	}

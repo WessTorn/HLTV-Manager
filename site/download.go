@@ -4,7 +4,6 @@ import (
 	"HLTV-Manager/hltv"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -41,19 +40,18 @@ func (site *Site) downloadHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	demoName, err := hltv.GetDemoFileName(demoID)
+	demoName, demoPath, err := hltv.GetDemoFile(demoID)
 	if err != nil {
-		http.Error(w, "Invalid GetDemoFileName Demo.", http.StatusBadRequest)
+		http.Error(w, "Invalid demo requested.", http.StatusBadRequest)
 		return
 	}
 
-	demoFilePath := filepath.Join(hltv.Settings.DemoDir, demoName)
-	if _, err := os.Stat(demoFilePath); os.IsNotExist(err) {
+	if _, err := os.Stat(demoPath); os.IsNotExist(err) {
 		http.Error(w, "Demo file not found.", http.StatusNotFound)
 		return
 	}
 
 	w.Header().Set("Content-Disposition", "attachment; filename="+demoName)
 	w.Header().Set("Content-Type", "application/octet-stream")
-	http.ServeFile(w, r, demoFilePath)
+	http.ServeFile(w, r, demoPath)
 }

@@ -33,6 +33,8 @@ type Demos struct {
 	Date string
 	Time string
 	Map  string
+	Path string
+	Archived bool
 }
 
 func NewHLTV(id int, settings Settings) (*HLTV, error) {
