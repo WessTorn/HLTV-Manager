@@ -47,13 +47,18 @@ func main() {
 			continue
 		}
 
-		err = h.Start()
-		if err != nil {
-			continue
-		}
+			err = h.Start()
+			if err != nil {
+				continue
+			}
 
-		hltvs = append(hltvs, h)
-	}
+			if err := h.DemoControl(); err != nil {
+				log.WarningLogger.Printf("HLTV (ID: %d, Name: %s) Failed to preload demos: %v", h.ID, h.Settings.Name, err)
+				continue
+			}
+
+			hltvs = append(hltvs, h)
+		}
 
 	site := &site.Site{HLTV: hltvs}
 	go site.Init()
