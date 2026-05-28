@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HLTV Manager</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="layout">
+    <header class="header">
+      <h1>HLTV Manager</h1>
+      <p class="muted">Frontend отдельно от backend API</p>
+    </header>
+
+    <section class="actions">
+      <button id="startAllBtn" class="btn">Start All</button>
+      <button id="stopAllBtn" class="btn btn-danger">Stop All</button>
+      <button id="refreshBtn" class="btn btn-ghost">Refresh</button>
+    </section>
+
+    <section>
+      <div id="status" class="status"></div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Connect</th>
+            <th>Running</th>
+            <th>Demos</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="hltvRows"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

@@ -14,6 +14,9 @@ import (
 )
 
 func (h *HLTV) DemoControl() error {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
 	if err := h.ArchiveCompletedDemos(); err != nil {
 		return err
 	}
@@ -223,6 +226,9 @@ func (h *HLTV) DeleteOldDemos() error {
 }
 
 func (h *HLTV) GetDemoFile(demoID int) (string, string, error) {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
 	for _, d := range h.Demos {
 		if d.ID == demoID {
 			if d.Path == "" {
@@ -233,4 +239,13 @@ func (h *HLTV) GetDemoFile(demoID int) (string, string, error) {
 	}
 
 	return "", "", fmt.Errorf("demo with id %d not found", demoID)
+}
+
+func (h *HLTV) SnapshotDemos() []Demos {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+
+	demos := make([]Demos, len(h.Demos))
+	copy(demos, h.Demos)
+	return demos
 }

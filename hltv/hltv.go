@@ -4,6 +4,7 @@ import (
 	"HLTV-Manager/docker"
 	log "HLTV-Manager/logger"
 	"fmt"
+	"sync"
 )
 
 type HLTV struct {
@@ -12,6 +13,7 @@ type HLTV struct {
 	Demos    []Demos
 	Docker   *docker.Docker
 	Parser   Parser
+	mu       sync.RWMutex
 }
 
 type Settings struct {
@@ -28,12 +30,12 @@ type Settings struct {
 }
 
 type Demos struct {
-	ID   int
-	Name string
-	Date string
-	Time string
-	Map  string
-	Path string
+	ID       int
+	Name     string
+	Date     string
+	Time     string
+	Map      string
+	Path     string
 	Archived bool
 }
 

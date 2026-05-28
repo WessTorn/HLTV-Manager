@@ -1,0 +1,31 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hltv-backend
+    restart: unless-stopped
+    environment:
+      SITE_IP: 0.0.0.0
+      SITE_PORT: 3000
+      HLTV_DOCKER: ghcr.io/wesstorn/hltv-files:v1.3
+      HLTV_RUNNER_FILE: /app/hltv-runners.yaml
+      HLT_DEMOS_DIR: /data
+      TZ: Europe/Moscow
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./hltv-runners.yaml:/app/hltv-runners.yaml:ro
+      - ./data:/data
+    expose:
+      - "3000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: hltv-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"

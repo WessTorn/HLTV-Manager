@@ -1,11 +1,12 @@
 package main
 
 import (
+	"HLTV-Manager/api"
 	"HLTV-Manager/config"
-	"HLTV-Manager/hltv"
 	log "HLTV-Manager/logger"
 	"HLTV-Manager/reader"
-	"HLTV-Manager/site"
+	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -27,68 +28,42 @@ func main() {
 		return
 	}
 
-	var hltvs []*hltv.HLTV
+	server := api.NewServer(read)
+	server.StartAll()
 
-	for i, runner := range read {
-		hltvConfig := hltv.Settings{
-			Name:             runner.Name,
-			ShowIP:           runner.ShowIP,
-			Connect:          runner.Connect,
-			Port:             runner.Port,
-			GameID:           runner.GameID,
-			DemoName:         runner.DemoName,
-			MaxDemoDay:       runner.MaxDemoDay,
-			DebugTerminalLog: runner.DebugTerminalLog,
-			Cvars:            runner.Cvars,
-		}
-
-		h, err := hltv.NewHLTV(i+1, hltvConfig)
-		if err != nil {
-			continue
-		}
-
-			err = h.Start()
-			if err != nil {
-				continue
-			}
-
-			if err := h.DemoControl(); err != nil {
-				log.WarningLogger.Printf("HLTV (ID: %d, Name: %s) Failed to preload demos: %v", h.ID, h.Settings.Name, err)
-				continue
-			}
-
-			hltvs = append(hltvs, h)
-		}
-
-	site := &site.Site{HLTV: hltvs}
-	go site.Init()
+	address := fmt.Sprintf("%s:%s", config.SiteIP(), config.SitePort())
+	httpServer := &http.Server{
+		Addr:    address,
+		Handler: server.Routes(),
+	}
 
 	shutDown := make(chan os.Signal, 1)
 	signal.Notify(shutDown, syscall.SIGINT, syscall.SIGTERM)
+	shutdownDone := make(chan struct{})
 
 	go func() {
 		<-shutDown
 
-		for _, hltv := range hltvs {
-			hltv.Quit()
+		server.StopAll()
+
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if err := httpServer.Shutdown(ctx); err != nil {
+			log.ErrorLogger.Printf("Graceful shutdown error: %v", err)
 		}
 
-		time.Sleep(2 * time.Second)
-
 		log.InfoLogger.Println("Программа завершена.")
-
-		os.Exit(0)
+		close(shutdownDone)
 	}()
 
-	address := fmt.Sprintf("%s:%s", config.SiteIP(), config.SitePort())
-	log.InfoLogger.Println("Starting site: ", address)
-	err = http.ListenAndServe(address, nil)
-	if err != nil {
-		log.ErrorLogger.Println("Server startup error: %v", err)
+	log.InfoLogger.Println("Starting API server: ", address)
+	err = httpServer.ListenAndServe()
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		log.ErrorLogger.Printf("Server startup error: %v", err)
 		shutDown <- syscall.SIGTERM
 	}
 
-	select {}
+	<-shutdownDone
 }
 
 // for {
