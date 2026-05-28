@@ -10,12 +10,12 @@ services:
       SITE_PORT: 3000
       HLTV_DOCKER: ghcr.io/wesstorn/hltv-files:v1.3
       HLTV_RUNNER_FILE: /app/hltv-runners.yaml
-      HLT_DEMOS_DIR: /data
+      HLT_DEMOS_DIR: /media/hltv-manager
       TZ: Europe/Moscow
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./hltv-runners.yaml:/app/hltv-runners.yaml:ro
-      - ./data:/data
+      - /media/hltv-manager/demos:/media/hltv-manager/demos
     expose:
       - "3000"
 

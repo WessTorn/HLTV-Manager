@@ -1,14 +1,29 @@
 const rows = document.getElementById("hltvRows");
+const demoRows = document.getElementById("demoRows");
+const demosTitle = document.getElementById("demosTitle");
 const statusEl = document.getElementById("status");
+const healthStatus = document.getElementById("healthStatus");
 const refreshBtn = document.getElementById("refreshBtn");
 const startAllBtn = document.getElementById("startAllBtn");
 const stopAllBtn = document.getElementById("stopAllBtn");
 
 const apiBase = "/api/v1";
+let selectedHLTV = null;
 
 function setStatus(text, isError = false) {
   statusEl.textContent = text;
   statusEl.style.color = isError ? "#b22f2f" : "#61707f";
+}
+
+function setHealthState(up) {
+  if (up) {
+    healthStatus.textContent = "API: UP";
+    healthStatus.className = "health-badge health-up";
+    return;
+  }
+
+  healthStatus.textContent = "API: DOWN";
+  healthStatus.className = "health-badge health-down";
 }
 
 async function request(path, options = {}) {
@@ -44,6 +59,7 @@ function renderRow(item) {
         <button class="btn" data-action="start">Start</button>
         <button class="btn btn-danger" data-action="stop">Stop</button>
         <button class="btn btn-ghost" data-action="restart">Restart</button>
+        <button class="btn btn-ghost" data-action="demos">Demos</button>
       </div>
     </td>
   `;
@@ -51,8 +67,67 @@ function renderRow(item) {
   tr.querySelector('[data-action="start"]').addEventListener("click", () => runAction(item.id, "start"));
   tr.querySelector('[data-action="stop"]').addEventListener("click", () => runAction(item.id, "stop"));
   tr.querySelector('[data-action="restart"]').addEventListener("click", () => runAction(item.id, "restart"));
+  tr.querySelector('[data-action="demos"]').addEventListener("click", () => loadDemos(item.id, item.name));
 
   return tr;
+}
+
+function renderDemoRow(hltvID, demo) {
+  const tr = document.createElement("tr");
+  const archived = demo.archived
+    ? '<span class="pill pill-stop">YES</span>'
+    : '<span class="pill pill-ok">NO</span>';
+  const downloadLink = `${apiBase}/hltv/${hltvID}/demos/${demo.id}/download`;
+
+  tr.innerHTML = `
+    <td>${demo.id}</td>
+    <td>${demo.map || "-"}</td>
+    <td>${demo.date || "-"}</td>
+    <td>${demo.time || "-"}</td>
+    <td>${archived}</td>
+    <td><a class="btn btn-small" href="${downloadLink}">Download</a></td>
+  `;
+  return tr;
+}
+
+async function checkHealth() {
+  try {
+    await request("/health");
+    setHealthState(true);
+  } catch (error) {
+    setHealthState(false);
+  }
+}
+
+async function loadDemos(id, name, silent = false) {
+  selectedHLTV = { id, name };
+  demosTitle.textContent = `Demos: ${name} (#${id})`;
+  demoRows.innerHTML = "";
+
+  if (!silent) {
+    setStatus(`Loading demos for #${id}...`);
+  }
+
+  try {
+    const data = await request(`/hltv/${id}/demos`);
+    const items = data.items || [];
+
+    if (!items.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = '<td colspan="6" class="muted-cell">No demos found.</td>';
+      demoRows.appendChild(tr);
+    } else {
+      for (const demo of items) {
+        demoRows.appendChild(renderDemoRow(id, demo));
+      }
+    }
+
+    if (!silent) {
+      setStatus(`Loaded demos: ${items.length} for #${id}`);
+    }
+  } catch (error) {
+    setStatus(`Demos error: ${error.message}`, true);
+  }
 }
 
 async function loadHLTV() {
@@ -64,6 +139,10 @@ async function loadHLTV() {
       rows.appendChild(renderRow(item));
     }
     setStatus(`Loaded: ${(data.items || []).length} HLTV`);
+
+    if (selectedHLTV) {
+      await loadDemos(selectedHLTV.id, selectedHLTV.name, true);
+    }
   } catch (error) {
     setStatus(`Load error: ${error.message}`, true);
   }
@@ -89,8 +168,13 @@ async function runGlobalAction(action) {
   }
 }
 
-refreshBtn.addEventListener("click", loadHLTV);
+async function refreshAll() {
+  await checkHealth();
+  await loadHLTV();
+}
+
+refreshBtn.addEventListener("click", refreshAll);
 startAllBtn.addEventListener("click", () => runGlobalAction("start"));
 stopAllBtn.addEventListener("click", () => runGlobalAction("stop"));
 
-loadHLTV();
+refreshAll();

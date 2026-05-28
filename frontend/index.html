@@ -9,8 +9,11 @@
 <body>
   <main class="layout">
     <header class="header">
-      <h1>HLTV Manager</h1>
-      <p class="muted">Frontend отдельно от backend API</p>
+      <div>
+        <h1>HLTV Manager</h1>
+        <p class="muted">Frontend отдельно от backend API</p>
+      </div>
+      <div id="healthStatus" class="health-badge health-unknown">API: CHECKING</div>
     </header>
 
     <section class="actions">
@@ -19,7 +22,7 @@
       <button id="refreshBtn" class="btn btn-ghost">Refresh</button>
     </section>
 
-    <section>
+    <section class="panel">
       <div id="status" class="status"></div>
       <table class="table">
         <thead>
@@ -33,6 +36,23 @@
           </tr>
         </thead>
         <tbody id="hltvRows"></tbody>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2 id="demosTitle">Demos</h2>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Map</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Archived</th>
+            <th>Download</th>
+          </tr>
+        </thead>
+        <tbody id="demoRows"></tbody>
       </table>
     </section>
   </main>

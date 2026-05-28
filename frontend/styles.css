@@ -27,6 +27,13 @@ body {
   padding: 0 16px;
 }
 
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .header h1 {
   margin: 0;
 }
@@ -40,6 +47,7 @@ body {
   margin: 20px 0;
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .btn {
@@ -77,6 +85,14 @@ body {
   min-height: 24px;
   margin-bottom: 10px;
   color: var(--muted);
+}
+
+.panel {
+  margin-bottom: 18px;
+}
+
+.panel h2 {
+  margin: 0 0 10px 0;
 }
 
 .table {
@@ -117,5 +133,56 @@ body {
 
 .row-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
+}
+
+.health-badge {
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+
+.health-up {
+  background: #dbf6e6;
+  color: #1c7a43;
+  border-color: #b2e8c7;
+}
+
+.health-down {
+  background: #fde7e7;
+  color: #a22b2b;
+  border-color: #f5c0c0;
+}
+
+.health-unknown {
+  background: #eef2f6;
+  color: #516172;
+  border-color: #d4dde6;
+}
+
+.btn-small {
+  display: inline-block;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.muted-cell {
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 }
