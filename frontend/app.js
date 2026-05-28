@@ -161,10 +161,39 @@ async function runAction(id, action) {
 async function runGlobalAction(action) {
   try {
     setStatus(`${action.toUpperCase()} ALL...`);
-    await request(`/hltv/${action}-all`, { method: "POST" });
+    const data = await request("/hltv");
+    const items = data.items || [];
+    const targets = items.filter((item) => {
+      if (action === "start") {
+        return !item.running;
+      }
+      if (action === "stop") {
+        return item.running;
+      }
+      return false;
+    });
+    if (!targets.length) {
+      await loadHLTV();
+      setStatus(`${action.toUpperCase()} ALL: nothing to do`);
+      return;
+    }
+
+    let failed = 0;
+    for (const item of targets) {
+      try {
+        await request(`/hltv/${item.id}/${action}`, { method: "POST" });
+      } catch (error) {
+        failed += 1;
+      }
+    }
+
     await loadHLTV();
+    setStatus(
+      `${action.toUpperCase()} ALL done: ${targets.length - failed}/${targets.length}`,
+      failed > 0
+    );
   } catch (error) {
-    setStatus(`${action}-all error: ${error.message}`, true);
+    setStatus(`${action} all error: ${error.message}`, true);
   }
 }
 

@@ -15,6 +15,12 @@ import (
 	"time"
 )
 
+// @title           HLTV-Manager backend
+// @version         beta1.0
+// @description     API for HLTV-Manager.
+// @host            0.0.0.0:3030
+// @BasePath        /
+// @schemes         http
 func main() {
 	err := log.InitLogger("./log/")
 	if err != nil {
@@ -29,12 +35,12 @@ func main() {
 	}
 
 	server := api.NewServer(read)
+	server.InitAPI()
 	server.StartAll()
 
 	address := fmt.Sprintf("%s:%s", config.SiteIP(), config.SitePort())
 	httpServer := &http.Server{
-		Addr:    address,
-		Handler: server.Routes(),
+		Addr: address,
 	}
 
 	shutDown := make(chan os.Signal, 1)
