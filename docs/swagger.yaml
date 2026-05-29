@@ -9,6 +9,25 @@ definitions:
       success:
         type: boolean
     type: object
+  api.HLTVInfoResponse:
+    properties:
+      connect:
+        type: string
+      demos_count:
+        type: integer
+      game_id:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      port:
+        type: string
+      running:
+        type: boolean
+      show_ip:
+        type: string
+    type: object
   api.HLTVListItem:
     properties:
       connect:
@@ -60,6 +79,36 @@ paths:
           schema:
             $ref: '#/definitions/api.ErrorResponse'
       summary: Get list of HLTV instances
+      tags:
+      - hltv
+  /api/v1/hltv/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Returns one HLTV instance by ID with current runtime status and
+        demos count.
+      parameters:
+      - description: HLTV ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: HLTV instance summary
+          schema:
+            $ref: '#/definitions/api.HLTVInfoResponse'
+        "400":
+          description: Invalid HLTV ID
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "404":
+          description: HLTV not found
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get HLTV instance details
       tags:
       - hltv
 schemes:

@@ -43,6 +43,50 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/hltv/{id}": {
+            "get": {
+                "description": "Returns one HLTV instance by ID with current runtime status and demos count.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "hltv"
+                ],
+                "summary": "Get HLTV instance details",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "HLTV ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "HLTV instance summary",
+                        "schema": {
+                            "$ref": "#/definitions/api.HLTVInfoResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid HLTV ID",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "HLTV not found",
+                        "schema": {
+                            "$ref": "#/definitions/api.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -57,6 +101,35 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "api.HLTVInfoResponse": {
+            "type": "object",
+            "properties": {
+                "connect": {
+                    "type": "string"
+                },
+                "demos_count": {
+                    "type": "integer"
+                },
+                "game_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "port": {
+                    "type": "string"
+                },
+                "running": {
+                    "type": "boolean"
+                },
+                "show_ip": {
+                    "type": "string"
                 }
             }
         },

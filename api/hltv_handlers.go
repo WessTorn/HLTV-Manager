@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func (s *Server) hltvCommandsHandler(w http.ResponseWriter, r *http.Request) {
+func (s *Server) hltvHandlers(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimPrefix(r.URL.Path, "/api/v1/hltv/")
 	path = strings.Trim(path, "/")
 	if path == "" {
@@ -40,40 +40,6 @@ func (s *Server) hltvCommandsHandler(w http.ResponseWriter, r *http.Request) {
 	default:
 		writeError(w, http.StatusNotFound, "route not found")
 	}
-}
-
-func (s *Server) handleGetHLTV(w http.ResponseWriter, id int) {
-	s.mu.RLock()
-	state, ok := s.states[id]
-	if !ok {
-		s.mu.RUnlock()
-		writeError(w, http.StatusNotFound, "hltv not found")
-		return
-	}
-	instance := state.Instance
-	running := state.Running
-	settings := state.Settings
-	s.mu.RUnlock()
-
-	var demos []hltv.Demos
-	if instance != nil {
-		_ = instance.DemoControl()
-		demos = instance.SnapshotDemos()
-	}
-
-	writeJSON(w, http.StatusOK, HLTVDetailsResponse{
-		HLTVSummaryResponse: HLTVSummaryResponse{
-			ID:         id,
-			Name:       settings.Name,
-			ShowIP:     settings.ShowIP,
-			Connect:    settings.Connect,
-			Port:       settings.Port,
-			GameID:     settings.GameID,
-			Running:    running,
-			DemosCount: len(demos),
-		},
-		Demos: demos,
-	})
 }
 
 func (s *Server) handleGetDemos(w http.ResponseWriter, id int) {

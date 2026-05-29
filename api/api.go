@@ -56,5 +56,5 @@ func (s *Server) InitAPI() {
 
 	http.HandleFunc("/api/v1/hltv", withCORSFunc(s.hltvListHandler))
 
-	http.HandleFunc("/api/v1/hltv/", withCORSFunc(s.hltvCommandsHandler))
+	http.HandleFunc("/api/v1/hltv/", withCORSFunc(s.hltvHandlers))
 }

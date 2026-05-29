@@ -21,21 +21,6 @@ type MessageResponse struct {
 	Message string `json:"message"`
 }
 
-type HLTVSummaryResponse struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	ShowIP     string `json:"show_ip"`
-	Connect    string `json:"connect"`
-	Port       string `json:"port"`
-	GameID     string `json:"game_id"`
-	Running    bool   `json:"running"`
-	DemosCount int    `json:"demos_count"`
-}
-
-type HLTVDetailsResponse struct {
-	HLTVSummaryResponse
-	Demos []hltv.Demos `json:"demos"`
-}
 
 type DemosResponse struct {
 	Items []hltv.Demos `json:"items"`

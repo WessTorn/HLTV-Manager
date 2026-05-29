@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -30,7 +29,7 @@ type HLTVListResponse struct {
 // @Router      /api/v1/hltv [get]
 func (s *Server) hltvListHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 
@@ -59,6 +58,5 @@ func (s *Server) hltvListHandler(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(HLTVListResponse{Items: list})
+	writeJSON(w, http.StatusOK, HLTVListResponse{Items: list})
 }
