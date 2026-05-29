@@ -1,10 +1,13 @@
 package api
 
 import (
+	_ "HLTV-Manager/docs"
 	"HLTV-Manager/hltv"
 	"HLTV-Manager/reader"
 	"net/http"
 	"sync"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type hltvState struct {
@@ -44,6 +47,10 @@ func NewServer(runners []reader.HLTV) *Server {
 }
 
 func (s *Server) InitAPI() {
+	http.Handle("/swagger/", httpSwagger.Handler(
+		httpSwagger.URL("/swagger/doc.json"),
+	))
+
 	http.HandleFunc("/", withCORSFunc(s.rootHandler))
 	http.HandleFunc("/api/v1/health", withCORSFunc(s.healthHandler))
 

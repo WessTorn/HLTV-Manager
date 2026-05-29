@@ -1,0 +1,67 @@
+basePath: /
+definitions:
+  api.ErrorResponse:
+    properties:
+      error:
+        type: string
+      status:
+        type: integer
+      success:
+        type: boolean
+    type: object
+  api.HLTVListItem:
+    properties:
+      connect:
+        type: string
+      demos_count:
+        type: integer
+      game_id:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      port:
+        type: string
+      running:
+        type: boolean
+      show_ip:
+        type: string
+    type: object
+  api.HLTVListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/api.HLTVListItem'
+        type: array
+    type: object
+host: 0.0.0.0:3030
+info:
+  contact: {}
+  description: API for HLTV-Manager.
+  title: HLTV-Manager backend
+  version: beta1.0
+paths:
+  /api/v1/hltv:
+    get:
+      consumes:
+      - application/json
+      description: Returns all configured HLTV instances with current runtime status
+        and demo count.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of HLTV instances
+          schema:
+            $ref: '#/definitions/api.HLTVListResponse'
+        "405":
+          description: Method not allowed
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Get list of HLTV instances
+      tags:
+      - hltv
+schemes:
+- http
+swagger: "2.0"
