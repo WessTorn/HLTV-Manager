@@ -54,6 +54,11 @@ definitions:
           $ref: '#/definitions/api.HLTVListItem'
         type: array
     type: object
+  api.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
 host: 0.0.0.0:3030
 info:
   contact: {}
@@ -109,6 +114,93 @@ paths:
           schema:
             $ref: '#/definitions/api.ErrorResponse'
       summary: Get HLTV instance details
+      tags:
+      - hltv
+  /api/v1/hltv/{id}/restart:
+    post:
+      consumes:
+      - application/json
+      description: Restarts one HLTV instance by ID.
+      parameters:
+      - description: HLTV ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: HLTV restarted
+          schema:
+            $ref: '#/definitions/api.MessageResponse'
+        "400":
+          description: Restart error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "405":
+          description: Method not allowed
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Restart HLTV instance
+      tags:
+      - hltv
+  /api/v1/hltv/{id}/start:
+    post:
+      consumes:
+      - application/json
+      description: Starts one HLTV instance by ID.
+      parameters:
+      - description: HLTV ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: HLTV started
+          schema:
+            $ref: '#/definitions/api.MessageResponse'
+        "400":
+          description: Start error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "405":
+          description: Method not allowed
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Start HLTV instance
+      tags:
+      - hltv
+  /api/v1/hltv/{id}/stop:
+    post:
+      consumes:
+      - application/json
+      description: Stops one HLTV instance by ID.
+      parameters:
+      - description: HLTV ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: HLTV stopped
+          schema:
+            $ref: '#/definitions/api.MessageResponse'
+        "400":
+          description: Stop error
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+        "405":
+          description: Method not allowed
+          schema:
+            $ref: '#/definitions/api.ErrorResponse'
+      summary: Stop HLTV instance
       tags:
       - hltv
 schemes:

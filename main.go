@@ -94,7 +94,6 @@ func main() {
 
 // For dev
 
-//go install github.com/swaggo/swag/cmd/swag@latest
-//swag init -g main.go -o docs --parseInternal
+// swag init -g main.go -o docs --parseInternal
 
 // docker compose up --build -d
