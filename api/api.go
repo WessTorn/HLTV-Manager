@@ -2,48 +2,18 @@ package api
 
 import (
 	_ "HLTV-Manager/docs"
-	"HLTV-Manager/hltv"
-	"HLTV-Manager/reader"
+	"HLTV-Manager/service"
 	"net/http"
-	"sync"
 
 	httpSwagger "github.com/swaggo/http-swagger"
 )
 
-type hltvState struct {
-	ID       int
-	Settings hltv.Settings
-	Instance *hltv.HLTV
-	Running  bool
-}
-
 type Server struct {
-	mu     sync.RWMutex
-	states map[int]*hltvState
+	service service.Service
 }
 
-func NewServer(runners []reader.HLTV) *Server {
-	states := make(map[int]*hltvState, len(runners))
-
-	for i, runner := range runners {
-		id := i + 1
-		states[id] = &hltvState{
-			ID: id,
-			Settings: hltv.Settings{
-				Name:             runner.Name,
-				ShowIP:           runner.ShowIP,
-				Connect:          runner.Connect,
-				Port:             runner.Port,
-				GameID:           runner.GameID,
-				DemoName:         runner.DemoName,
-				MaxDemoDay:       runner.MaxDemoDay,
-				DebugTerminalLog: runner.DebugTerminalLog,
-				Cvars:            runner.Cvars,
-			},
-		}
-	}
-
-	return &Server{states: states}
+func NewServer(svc service.Service) *Server {
+	return &Server{service: svc}
 }
 
 func (s *Server) InitAPI() {

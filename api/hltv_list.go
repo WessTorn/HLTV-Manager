@@ -33,28 +33,18 @@ func (s *Server) hltvListHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Защищаем state
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-
-	list := make([]HLTVListItem, 0, len(s.states))
-	for _, id := range s.sortedIDsLocked() {
-		state := s.states[id]
-
-		demosCount := 0
-		if state.Instance != nil {
-			demosCount = len(state.Instance.SnapshotDemos())
-		}
-
+	items := s.service.List()
+	list := make([]HLTVListItem, 0, len(items))
+	for _, state := range items {
 		list = append(list, HLTVListItem{
 			ID:         state.ID,
-			Name:       state.Settings.Name,
-			ShowIP:     state.Settings.ShowIP,
-			Connect:    state.Settings.Connect,
-			Port:       state.Settings.Port,
-			GameID:     state.Settings.GameID,
+			Name:       state.Name,
+			ShowIP:     state.ShowIP,
+			Connect:    state.Connect,
+			Port:       state.Port,
+			GameID:     state.GameID,
 			Running:    state.Running,
-			DemosCount: demosCount,
+			DemosCount: state.DemosCount,
 		})
 	}
 

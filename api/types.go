@@ -21,7 +21,6 @@ type MessageResponse struct {
 	Message string `json:"message"`
 }
 
-
 type DemosResponse struct {
 	Items []hltv.Demos `json:"items"`
 }

@@ -5,6 +5,8 @@ import (
 	"HLTV-Manager/config"
 	log "HLTV-Manager/logger"
 	"HLTV-Manager/reader"
+	"HLTV-Manager/repository"
+	"HLTV-Manager/service"
 	"context"
 	"errors"
 	"fmt"
@@ -34,9 +36,12 @@ func main() {
 		return
 	}
 
-	server := api.NewServer(read)
+	repo := repository.NewInMemoryHLTVRepository(read)
+	hltvService := service.NewHLTVService(repo)
+
+	server := api.NewServer(hltvService)
 	server.InitAPI()
-	server.StartAll()
+	hltvService.StartAll()
 
 	address := fmt.Sprintf("%s:%s", config.SiteIP(), config.SitePort())
 	httpServer := &http.Server{
@@ -50,7 +55,7 @@ func main() {
 	go func() {
 		<-shutDown
 
-		server.StopAll()
+		hltvService.StopAll()
 
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()

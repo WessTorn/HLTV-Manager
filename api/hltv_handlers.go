@@ -1,7 +1,8 @@
 package api
 
 import (
-	"HLTV-Manager/hltv"
+	"HLTV-Manager/service"
+	"errors"
 	"net/http"
 	"os"
 	"strconv"
@@ -28,8 +29,14 @@ func (s *Server) hltvHandlers(w http.ResponseWriter, r *http.Request) {
 	case len(parts) == 1 && r.Method == http.MethodGet:
 		s.handleGetHLTV(w, id)
 		return
-	case len(parts) == 2 && isHLTVAction(parts[1]):
-		s.handleHLTVAction(w, r, id, parts[1])
+	case len(parts) == 2 && parts[1] == "start":
+		s.handleStartHLTV(w, r, id)
+		return
+	case len(parts) == 2 && parts[1] == "stop":
+		s.handleStopHLTV(w, r, id)
+		return
+	case len(parts) == 2 && parts[1] == "restart":
+		s.handleRestartHLTV(w, r, id)
 		return
 	case len(parts) == 2 && parts[1] == "demos" && r.Method == http.MethodGet:
 		s.handleGetDemos(w, id)
@@ -43,23 +50,17 @@ func (s *Server) hltvHandlers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleGetDemos(w http.ResponseWriter, id int) {
-	s.mu.RLock()
-	state, ok := s.states[id]
-	if !ok {
-		s.mu.RUnlock()
+	demos, err := s.service.GetDemos(id)
+	if errors.Is(err, service.ErrHLTVNotFound) {
 		writeError(w, http.StatusNotFound, "hltv not found")
 		return
 	}
-	instance := state.Instance
-	s.mu.RUnlock()
-
-	if instance == nil {
-		writeJSON(w, http.StatusOK, DemosResponse{Items: []hltv.Demos{}})
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	_ = instance.DemoControl()
-	writeJSON(w, http.StatusOK, DemosResponse{Items: instance.SnapshotDemos()})
+	writeJSON(w, http.StatusOK, DemosResponse{Items: demos})
 }
 
 func (s *Server) handleDownloadDemo(w http.ResponseWriter, r *http.Request, hltvID int, demoIDRaw string) {
@@ -69,24 +70,21 @@ func (s *Server) handleDownloadDemo(w http.ResponseWriter, r *http.Request, hltv
 		return
 	}
 
-	s.mu.RLock()
-	state, ok := s.states[hltvID]
-	if !ok {
-		s.mu.RUnlock()
+	demoName, demoPath, err := s.service.GetDemoFile(hltvID, demoID)
+	if errors.Is(err, service.ErrHLTVNotFound) {
 		writeError(w, http.StatusNotFound, "hltv not found")
 		return
 	}
-	instance := state.Instance
-	s.mu.RUnlock()
-
-	if instance == nil {
+	if errors.Is(err, service.ErrHLTVNotStarted) {
 		writeError(w, http.StatusBadRequest, "hltv was not started yet")
 		return
 	}
-
-	demoName, demoPath, err := instance.GetDemoFile(demoID)
-	if err != nil {
+	if errors.Is(err, service.ErrInvalidDemo) {
 		writeError(w, http.StatusBadRequest, "invalid demo requested")
+		return
+	}
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err.Error())
 		return
 	}
 

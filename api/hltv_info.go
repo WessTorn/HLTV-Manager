@@ -26,32 +26,20 @@ type HLTVInfoResponse struct {
 // @Failure     404 {object} ErrorResponse "HLTV not found"
 // @Router      /api/v1/hltv/{id} [get]
 func (s *Server) handleGetHLTV(w http.ResponseWriter, id int) {
-	s.mu.RLock()
-	state, ok := s.states[id]
-	if !ok {
-		s.mu.RUnlock()
+	info, err := s.service.Get(id)
+	if err != nil {
 		writeError(w, http.StatusNotFound, "hltv not found")
 		return
 	}
-	instance := state.Instance
-	running := state.Running
-	settings := state.Settings
-	s.mu.RUnlock()
-
-	demosCount := 0
-	if instance != nil {
-		_ = instance.DemoControl()
-		demosCount = len(instance.SnapshotDemos())
-	}
 
 	writeJSON(w, http.StatusOK, HLTVInfoResponse{
-		ID:         id,
-		Name:       settings.Name,
-		ShowIP:     settings.ShowIP,
-		Connect:    settings.Connect,
-		Port:       settings.Port,
-		GameID:     settings.GameID,
-		Running:    running,
-		DemosCount: demosCount,
+		ID:         info.ID,
+		Name:       info.Name,
+		ShowIP:     info.ShowIP,
+		Connect:    info.Connect,
+		Port:       info.Port,
+		GameID:     info.GameID,
+		Running:    info.Running,
+		DemosCount: info.DemosCount,
 	})
 }
